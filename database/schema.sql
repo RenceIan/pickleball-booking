@@ -10,10 +10,25 @@ CREATE TABLE IF NOT EXISTS `users` (
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `role` ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+    `status` ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_users_email` (`email`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `password_resets` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` INT UNSIGNED NOT NULL,
+    `token_hash` CHAR(64) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `used_at` DATETIME NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_password_resets_token_hash` (`token_hash`),
+    KEY `idx_password_resets_user` (`user_id`, `expires_at`),
+    CONSTRAINT `fk_password_resets_user`
+        FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `memberships` (
@@ -96,6 +111,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
     `end_time` TIME NOT NULL,
     `credit_used` INT UNSIGNED NOT NULL DEFAULT 1,
     `credit_batch_id` INT UNSIGNED NULL,
+    `membership_type` VARCHAR(50) NOT NULL DEFAULT 'standard',
     `status` ENUM('confirmed', 'cancelled', 'completed') NOT NULL DEFAULT 'confirmed',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

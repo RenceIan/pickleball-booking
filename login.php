@@ -5,7 +5,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
 
 if (isLoggedIn()) {
-    redirect('dashboard.php');
+    redirect((currentUser()['role'] ?? '') === 'admin' ? 'admin/dashboard.php' : 'dashboard.php');
 }
 
 $error = null;
@@ -23,13 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo = getDatabaseConnection();
             $statement = $pdo->prepare(
-                'SELECT id, full_name, email, password, role FROM users WHERE email = :email LIMIT 1'
+                'SELECT id, full_name, email, password, role, status
+                 FROM users WHERE email = :email LIMIT 1'
             );
             $statement->execute(['email' => $email]);
             $user = $statement->fetch();
 
             if ($user === false || !password_verify($password, $user['password'])) {
                 $error = 'Invalid email or password.';
+            } elseif ($user['role'] !== 'admin' && $user['status'] === 'pending') {
+                $error = 'Your account is waiting for admin approval.';
+            } elseif ($user['role'] !== 'admin' && $user['status'] === 'rejected') {
+                $error = 'Your account registration was rejected. Please contact the club.';
             } else {
                 session_regenerate_id(true);
                 unset($user['password']);
@@ -55,9 +60,13 @@ require_once __DIR__ . '/includes/header.php';
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required value="<?= escape($email) ?>">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" required>
+        <div class="password-field">
+            <input id="password" name="password" type="password" required>
+            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password">Show</button>
+        </div>
         <button class="button" type="submit">Login</button>
     </form>
+    <p><a href="forgot-password.php">Forgot your password?</a></p>
     <p>Do not have an account? <a href="register.php">Register</a>.</p>
 </section>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

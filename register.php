@@ -5,7 +5,7 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
 
 if (isLoggedIn()) {
-    redirect('dashboard.php');
+    redirect((currentUser()['role'] ?? '') === 'admin' ? 'admin/dashboard.php' : 'dashboard.php');
 }
 
 $errors = [];
@@ -44,7 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'An account with that email already exists.';
             } else {
                 $statement = $pdo->prepare(
-                    'INSERT INTO users (full_name, email, password) VALUES (:full_name, :email, :password)'
+                    'INSERT INTO users (full_name, email, password, status)
+                     VALUES (:full_name, :email, :password, "pending")'
                 );
                 $statement->execute([
                     'full_name' => $fullName,
@@ -82,9 +83,15 @@ require_once __DIR__ . '/includes/header.php';
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required value="<?= escape($email) ?>">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" minlength="8" required>
+        <div class="password-field">
+            <input id="password" name="password" type="password" minlength="8" required>
+            <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password">Show</button>
+        </div>
         <label for="confirm_password">Confirm password</label>
-        <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
+        <div class="password-field">
+            <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
+            <button class="password-toggle" type="button" data-password-toggle="confirm_password" aria-label="Show password">Show</button>
+        </div>
         <button class="button" type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="login.php">Log in</a>.</p>

@@ -7,8 +7,10 @@ require_once dirname(__DIR__) . '/includes/admin_auth.php';
 $pdo = getDatabaseConnection();
 $statement = $pdo->query(
     'SELECT p.id, p.amount, p.reference_number, p.payment_date, p.proof_image, p.status,
-            p.submitted_at, p.admin_notes, u.full_name, u.email
-     FROM payments p JOIN users u ON u.id = p.user_id
+            p.submitted_at, p.admin_notes, m.membership_type, u.full_name, u.email
+     FROM payments p
+     JOIN memberships m ON m.id = p.membership_id
+     JOIN users u ON u.id = p.user_id
      ORDER BY p.submitted_at DESC'
 );
 $payments = $statement->fetchAll();
@@ -24,7 +26,7 @@ $user = currentUser();
 </head>
 <body>
 <header class="site-header">
-    <a class="brand" href="../dashboard.php">Pickleball Booking System</a>
+    <a class="brand" href="dashboard.php">Pickleball Booking System Admin</a>
     <nav><a href="dashboard.php">Admin Dashboard</a><a href="../logout.php">Logout</a></nav>
 </header>
 <main class="page-container">
@@ -40,10 +42,19 @@ $user = currentUser();
                     Amount: ₱<?= escape((string) $payment['amount']) ?><br>
                     Reference: <?= escape($payment['reference_number']) ?><br>
                     Payment date: <?= escape($payment['payment_date']) ?><br>
+                    Membership tier:
+                    <?php if ($payment['status'] === 'pending'): ?>
+                        <select name="membership_type" form="payment-review-<?= (int) $payment['id'] ?>">
+                            <option value="rally" <?= strtolower((string) $payment['membership_type']) === 'rally' ? 'selected' : '' ?>>Rally</option>
+                            <option value="smash" <?= strtolower((string) $payment['membership_type']) === 'smash' ? 'selected' : '' ?>>Smash</option>
+                        </select>
+                    <?php else: ?>
+                        <strong><?= escape(ucfirst((string) $payment['membership_type'])) ?></strong>
+                    <?php endif; ?><br>
                     Status: <strong><?= escape(ucfirst($payment['status'])) ?></strong><br>
                     <a href="proof.php?id=<?= (int) $payment['id'] ?>">View proof</a>
                     <?php if ($payment['status'] === 'pending'): ?>
-                        <form method="post" action="review-payment.php" class="inline-form">
+                        <form id="payment-review-<?= (int) $payment['id'] ?>" method="post" action="review-payment.php" class="inline-form">
                             <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
                             <input type="hidden" name="payment_id" value="<?= (int) $payment['id'] ?>">
                             <input name="admin_notes" placeholder="Optional note">

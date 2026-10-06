@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
-requireLogin();
+requireApprovedMember();
 
 $pdo = getDatabaseConnection();
 $user = currentUser();
 
 $membershipStatement = $pdo->prepare(
-    'SELECT status, expiration_date FROM memberships
+    'SELECT status, membership_type, expiration_date FROM memberships
      WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 1'
 );
 $membershipStatement->execute(['user_id' => $user['id']]);
@@ -44,6 +44,7 @@ require_once __DIR__ . '/includes/header.php';
     <h1>Welcome, <?= escape((string) $user['full_name']) ?></h1>
     <div class="member-summary">
         <div><span>Membership</span><strong><?= escape(ucfirst($membership['status'] ?? 'not started')) ?></strong></div>
+        <div><span>Tier</span><strong><?= escape(ucfirst($membership['membership_type'] ?? '—')) ?></strong></div>
         <div><span>Valid credits</span><strong><?= $validCredits ?></strong></div>
         <div><span>Membership expires</span><strong><?= escape($membership['expiration_date'] ?? '—') ?></strong></div>
         <div><span>Next credit expiration</span><strong><?= escape($nextCreditExpiration ?: '—') ?></strong></div>

@@ -11,8 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verifyCsrfToken($_POST['csrf_token
 
 $paymentId = filter_var($_POST['payment_id'] ?? null, FILTER_VALIDATE_INT);
 $decision = (string) ($_POST['decision'] ?? '');
+$membershipType = strtolower(trim((string) ($_POST['membership_type'] ?? '')));
 $adminNotes = trim((string) ($_POST['admin_notes'] ?? ''));
-if ($paymentId === false || !in_array($decision, ['approve', 'reject'], true)) {
+if ($paymentId === false || !in_array($decision, ['approve', 'reject'], true)
+    || ($decision === 'approve' && !in_array($membershipType, ['rally', 'smash'], true))) {
     http_response_code(400);
     exit('Invalid payment review request.');
 }
@@ -44,6 +46,8 @@ try {
     ]);
 
     if ($decision === 'approve') {
+        $pdo->prepare('UPDATE memberships SET membership_type = :membership_type WHERE id = :id')
+            ->execute(['membership_type' => $membershipType, 'id' => $payment['membership_id']]);
         $settingsStatement = $pdo->query(
             "SELECT setting_key, setting_value FROM settings
              WHERE setting_key IN ('membership_duration_months', 'credit_duration_months', 'credits_included')"

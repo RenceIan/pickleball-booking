@@ -9,6 +9,7 @@ $pdo = getDatabaseConnection();
 $countStatement = $pdo->query(
     "SELECT
         (SELECT COUNT(*) FROM users) AS total_users,
+        (SELECT COUNT(*) FROM users WHERE role = 'user' AND status = 'pending') AS pending_users,
         (SELECT COUNT(*) FROM memberships WHERE status = 'active' AND expiration_date >= CURDATE()) AS active_members,
         (SELECT COUNT(*) FROM payments WHERE status = 'pending') AS pending_payments,
         (SELECT COUNT(*) FROM payments WHERE status = 'approved') AS approved_payments,
@@ -48,8 +49,8 @@ $pendingPayments = $pendingStatement->fetchAll();
     <a class="brand" href="dashboard.php">Pickleball Booking System Admin</a>
     <nav>
         <a href="dashboard.php">Dashboard</a>
+        <a href="calendar.php">Booking Calendar</a>
         <a href="payments.php">Payments</a>
-        <a href="../dashboard.php">User Dashboard</a>
         <a href="../logout.php">Logout</a>
     </nav>
 </header>
@@ -62,11 +63,13 @@ $pendingPayments = $pendingStatement->fetchAll();
     <section class="stats-grid" aria-label="System summary">
         <a class="stat-card stat-link" href="users.php"><span>Total users</span><strong><?= (int) $counts['total_users'] ?></strong><small>View user accounts</small></a>
         <article class="stat-card"><span>Active members</span><strong><?= (int) $counts['active_members'] ?></strong></article>
+        <article class="stat-card highlight"><span>Pending accounts</span><strong><?= (int) $counts['pending_users'] ?></strong><a href="users.php">Review</a></article>
         <article class="stat-card highlight"><span>Pending payments</span><strong><?= (int) $counts['pending_payments'] ?></strong><a href="payments.php">Review</a></article>
         <article class="stat-card"><span>Approved payments</span><strong><?= (int) $counts['approved_payments'] ?></strong></article>
         <article class="stat-card"><span>Rejected payments</span><strong><?= (int) $counts['rejected_payments'] ?></strong></article>
         <article class="stat-card"><span>Today's bookings</span><strong><?= (int) $counts['todays_bookings'] ?></strong></article>
         <article class="stat-card"><span>Upcoming bookings</span><strong><?= (int) $counts['upcoming_bookings'] ?></strong></article>
+        <a class="stat-card stat-link" href="calendar.php"><span>Booking calendar</span><strong>View</strong><small>See member reservations</small></a>
         <article class="stat-card"><span>Credits issued</span><strong><?= (int) $counts['credits_issued'] ?></strong></article>
         <article class="stat-card"><span>Credits used</span><strong><?= (int) $counts['credits_used'] ?></strong></article>
     </section>
@@ -110,7 +113,11 @@ $pendingPayments = $pendingStatement->fetchAll();
                         <?php foreach ($todaysBookings as $booking): ?>
                             <tr>
                                 <td><?= escape($booking['full_name']) ?></td>
-                                <td><?= escape(substr($booking['start_time'], 0, 5)) ?>–<?= escape(substr($booking['end_time'], 0, 5)) ?></td>
+                                <td>
+                                    <?= escape(($startTime = DateTimeImmutable::createFromFormat('H:i:s', $booking['start_time'])) instanceof DateTimeImmutable ? $startTime->format('g:i A') : $booking['start_time']) ?>
+                                    –
+                                    <?= escape(($endTime = DateTimeImmutable::createFromFormat('H:i:s', $booking['end_time'])) instanceof DateTimeImmutable ? $endTime->format('g:i A') : $booking['end_time']) ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

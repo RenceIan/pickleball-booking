@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/includes/auth.php';
-requireLogin();
+requireApprovedMember();
 
 $user = currentUser();
 $errors = [];
 $referenceNumber = '';
 $paymentDate = date('Y-m-d');
 $amount = '';
+$membershipType = 'rally';
 $uploadDirectory = dirname(__DIR__) . '/private_payment_proofs';
 
 $settingsStatement = getDatabaseConnection()->query(
@@ -27,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $referenceNumber = trim((string) ($_POST['reference_number'] ?? ''));
     $paymentDate = (string) ($_POST['payment_date'] ?? '');
     $amount = trim((string) ($_POST['amount'] ?? ''));
+    $membershipType = strtolower(trim((string) ($_POST['membership_type'] ?? '')));
     $proof = $_FILES['proof_image'] ?? null;
 
     if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
@@ -41,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if (!is_numeric($amount) || (float) $amount <= 0) {
         $errors[] = 'Enter a valid payment amount.';
+    }
+    if (!in_array($membershipType, ['rally', 'smash'], true)) {
+        $errors[] = 'Select a valid membership type.';
     }
     if (!is_array($proof) || ($proof['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
         $errors[] = 'Upload a payment proof image.';
@@ -76,11 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->beginTransaction();
             $membershipStatement = $pdo->prepare(
-                "INSERT INTO memberships (user_id, amount_paid, status)
-                 VALUES (:user_id, :amount_paid, 'pending')"
+                "INSERT INTO memberships (user_id, membership_type, amount_paid, status)
+                 VALUES (:user_id, :membership_type, :amount_paid, 'pending')"
             );
             $membershipStatement->execute([
                 'user_id' => $user['id'],
+                'membership_type' => $membershipType,
                 'amount_paid' => number_format((float) $amount, 2, '.', ''),
             ]);
             $membershipId = (int) $pdo->lastInsertId();
@@ -133,6 +139,11 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
     <form method="post" enctype="multipart/form-data" novalidate>
         <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+        <label for="membership_type">Membership type</label>
+        <select id="membership_type" name="membership_type" required>
+            <option value="rally" <?= $membershipType === 'rally' ? 'selected' : '' ?>>Rally</option>
+            <option value="smash" <?= $membershipType === 'smash' ? 'selected' : '' ?>>Smash</option>
+        </select>
         <label for="reference_number">Payment reference number</label>
         <input id="reference_number" name="reference_number" required maxlength="100" value="<?= escape($referenceNumber) ?>">
         <label for="payment_date">Payment date</label>

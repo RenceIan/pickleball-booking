@@ -61,6 +61,20 @@ function requireLogin(): void
     }
 }
 
+function requireApprovedMember(): void
+{
+    requireLogin();
+
+    $user = currentUser();
+    if ($user !== null && ($user['role'] ?? '') === 'admin') {
+        redirect('admin/dashboard.php');
+    }
+    if ($user !== null && ($user['status'] ?? '') !== 'approved') {
+        flash('error', 'Your account is waiting for admin approval.');
+        redirect('pending-approval.php');
+    }
+}
+
 function requireAdmin(): void
 {
     requireLogin();
