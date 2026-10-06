@@ -2,181 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pickleball Booking System - Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --green: #166534; --light: #f4f7f6; --muted: #64748b; --border: #e2e8f0; }
-        * { box-sizing: border-box; }
-        body { background: var(--light); color: #1e293b; font-family: Arial, sans-serif; margin: 0; }
-        header { align-items: center; background: var(--green); color: white; display: flex; justify-content: space-between; padding: 1rem 6%; }
-        header a { color: white; cursor: pointer; margin-left: 1rem; text-decoration: none; }
-        .brand { font-weight: bold; }
-        main { margin: auto; max-width: 1050px; padding: 2.5rem 1rem; }
-        .hero, .card { background: white; border-radius: 10px; box-shadow: 0 2px 12px #00000012; padding: 2rem; }
-        .hero { margin: 2rem auto; max-width: 720px; text-align: center; }
-        h1, h2 { color: #172554; }
-        .button { background: var(--green); border: 0; border-radius: 5px; color: white; cursor: pointer; display: inline-block; font-size: 1rem; margin: .4rem .25rem .4rem 0; padding: .7rem 1rem; text-decoration: none; }
-        .button.secondary { background: #475569; }
-        .button.warn { background: #b45309; }
+        body { background: #f4f7f6; color: #1f2937; }
+        .navbar, .btn-success { background-color: #166534 !important; }
+        .brand { cursor: pointer; }
+        .page-card { border: 0; border-radius: .75rem; box-shadow: 0 2px 12px #00000012; }
         .screen { display: none; }
         .screen.active { display: block; }
-        .notice { background: #fef3c7; border-radius: 6px; color: #92400e; margin: 1rem 0; padding: 1rem; }
-        .success { background: #dcfce7; color: #166534; }
-        .grid { display: grid; gap: 1rem; grid-template-columns: repeat(4, 1fr); }
-        .stat { background: #f0fdf4; border-radius: 7px; padding: 1rem; }
-        .stat span { color: var(--muted); display: block; font-size: .85rem; }
-        .stat strong { display: block; font-size: 1.5rem; margin-top: .3rem; }
-        .two-column { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; margin-top: 1rem; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border-bottom: 1px solid var(--border); padding: .7rem; text-align: left; }
-        th { color: var(--muted); font-size: .85rem; }
-        .badge { background: #dcfce7; border-radius: 999px; color: #166534; display: inline-block; font-size: .85rem; padding: .2rem .6rem; }
-        .badge.pending { background: #fef3c7; color: #92400e; }
-        .badge.booked { background: #fee2e2; color: #991b1b; }
-        .slots { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); margin-top: 1rem; }
-        .slot { border-radius: 6px; padding: 1rem; }
-        .available { background: #dcfce7; color: #166534; }
-        .booked { background: #fee2e2; color: #991b1b; }
-        label { display: block; font-weight: bold; margin-top: .8rem; }
-        input { border: 1px solid var(--border); border-radius: 4px; font-size: 1rem; margin-top: .3rem; padding: .7rem; width: 100%; }
-        footer { color: var(--muted); padding: 1rem; text-align: center; }
-        @media (max-width: 700px) { header { align-items: flex-start; flex-direction: column; gap: .8rem; } header a { margin: 0 1rem 0 0; } .grid, .two-column, .slots { grid-template-columns: 1fr; } }
+        .stat-card { background: #f0fdf4; border: 0; }
+        .stat-card .value { color: #166534; font-size: 1.65rem; font-weight: 700; }
+        .slot { min-height: 120px; }
+        .slot.available { background: #dcfce7; color: #166534; }
+        .slot.booked { background: #fee2e2; color: #991b1b; }
+        .receipt-card { border-left: 4px solid #166534; }
+        @media (max-width: 575.98px) {
+            .display-5 { font-size: 2rem; }
+            .slot { min-height: auto; }
+        }
     </style>
 </head>
 <body>
-<header>
-    <a class="brand" onclick="show('home')">Pickleball Booking System</a>
-    <nav>
-        <a onclick="show('member')">Member Demo</a>
-        <a onclick="show('admin')">Admin Demo</a>
-    </nav>
-</header>
-<main>
-    <section id="home" class="screen active hero">
-        <h1>Pickleball Booking System</h1>
-        <p>Book your pickleball session, manage your membership, and check court availability in one place.</p>
-        <p><strong>Static clickable prototype</strong></p>
-        <p>This demo shows the planned flow without PHP or a database. Changes are simulated in your browser only.</p>
-        <button class="button" onclick="show('login')">Login Demo</button>
-        <button class="button secondary" onclick="show('register')">Register Demo</button>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold brand" onclick="show('home')">Pickleball Booking System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoNav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="demoNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" onclick="show('member')">Member Demo</a>
+                <a class="nav-link" onclick="show('admin')">Admin Demo</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-4 py-md-5">
+    <section id="home" class="screen active">
+        <div class="card page-card mx-auto text-center p-4 p-md-5" style="max-width: 720px;">
+            <h1 class="display-5 fw-bold text-primary">Pickleball Booking System</h1>
+            <p class="lead">Book your pickleball session, manage your membership, and check court availability in one place.</p>
+            <span class="badge text-bg-success align-self-center mb-3">Static clickable prototype</span>
+            <p class="text-secondary">This demo shows the planned flow without PHP or a database. Changes are simulated in your browser only.</p>
+            <div><button class="btn btn-success me-2" onclick="show('login')">Login Demo</button><button class="btn btn-outline-success" onclick="show('register')">Register Demo</button></div>
+        </div>
     </section>
 
-    <section id="login" class="screen card">
-        <h1>Login Demo</h1>
-        <p>Choose which experience to preview:</p>
-        <button class="button" onclick="show('member')">Log in as Member</button>
-        <button class="button warn" onclick="show('admin')">Log in as Admin</button>
+    <section id="login" class="screen">
+        <div class="card page-card mx-auto p-4" style="max-width: 560px;">
+            <h1 class="h2 text-primary">Login Demo</h1>
+            <p>Choose which experience to preview:</p>
+            <button class="btn btn-success me-2" onclick="show('member')">Log in as Member</button>
+            <button class="btn btn-warning" onclick="show('admin')">Log in as Admin</button>
+        </div>
     </section>
 
-    <section id="register" class="screen card">
-        <h1>Create an account</h1>
-        <label>Full name<input placeholder="Adrian Caranay"></label>
-        <label>Email<input type="email" placeholder="member@example.com"></label>
-        <label>Password<input type="password" placeholder="********"></label>
-        <button class="button" onclick="show('member')">Create Demo Account</button>
-        <div class="notice">In the real PHP application, registration securely stores a hashed password and creates a normal member account.</div>
+    <section id="register" class="screen">
+        <div class="card page-card mx-auto p-4" style="max-width: 560px;">
+            <h1 class="h2 text-primary">Create an account</h1>
+            <label class="form-label mt-2">Full name<input class="form-control" placeholder="Adrian Caranay"></label>
+            <label class="form-label mt-2">Email<input class="form-control" type="email" placeholder="member@example.com"></label>
+            <label class="form-label mt-2">Password<input class="form-control" type="password" placeholder="********"></label>
+            <button class="btn btn-success mt-3" onclick="show('member')">Create Demo Account</button>
+            <div class="alert alert-warning mt-3 mb-0">The real PHP application securely hashes passwords and creates a normal member account.</div>
+        </div>
     </section>
 
     <section id="member" class="screen">
-        <h1>Member Dashboard</h1>
-        <div class="grid">
-            <div class="stat"><span>Membership</span><strong>Active</strong></div>
-            <div class="stat"><span>Valid credits</span><strong id="creditCount">10</strong></div>
-            <div class="stat"><span>Membership expires</span><strong>2027-04-06</strong></div>
-            <div class="stat"><span>Credit expires</span><strong>2027-04-06</strong></div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3"><div><h1 class="h2 text-primary mb-1">Member Dashboard</h1><p class="text-secondary mb-0">Welcome, Member Demo</p></div><button class="btn btn-outline-secondary mt-2 mt-md-0" onclick="show('home')">Log out</button></div>
+        <div class="row g-3">
+            <div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Membership</small><div class="value">Active</div></div></div>
+            <div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Valid credits</small><div id="creditCount" class="value">10</div></div></div>
+            <div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Membership expires</small><div class="value fs-5">2027-04-06</div></div></div>
+            <div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Credit expires</small><div class="value fs-5">2027-04-06</div></div></div>
         </div>
-        <div class="notice success">Your membership is active. You can reserve an available court slot.</div>
-        <button class="button" onclick="show('calendar')">Reservation Calendar</button>
-        <button class="button secondary" onclick="show('payments')">Payment Invoice</button>
-        <button class="button secondary" onclick="show('credits')">Credit History</button>
-        <button class="button secondary" onclick="show('home')">Log out</button>
+        <div class="alert alert-success mt-4">Your membership is active. You can reserve an available court slot.</div>
+        <div class="d-flex flex-wrap gap-2"><button class="btn btn-success" onclick="show('calendar')">Reservation Calendar</button><button class="btn btn-outline-success" onclick="show('payments')">Payment Invoice</button><button class="btn btn-outline-success" onclick="show('credits')">Credit History</button></div>
     </section>
 
-    <section id="payments" class="screen card">
-        <h1>Payment Invoice and History</h1>
-        <p>Payment #1 <span class="badge">Approved</span></p>
-        <table><tr><th>Amount</th><td>₱499.99</td></tr><tr><th>Reference</th><td>12345</td></tr><tr><th>Payment date</th><td>2026-10-03</td></tr><tr><th>Submitted</th><td>2026-10-03 14:20</td></tr><tr><th>Reviewed</th><td>2026-10-03 14:31</td></tr></table>
-        <button class="button" onclick="show('member')">Back to Dashboard</button>
-    </section>
-
-    <section id="credits" class="screen card">
-        <h1>My Credits</h1>
-        <h2>Valid credits: <span id="creditCountLarge">10</span></h2>
-        <h2>Credit batches</h2>
-        <table><tr><th>Issued</th><th>Total</th><th>Remaining</th><th>Expires</th></tr><tr><td>2026-10-03</td><td>10</td><td id="batchRemaining">10</td><td>2027-04-06</td></tr></table>
-        <h2>Transaction history</h2>
-        <table><tr><th>Date</th><th>Type</th><th>Amount</th></tr><tr><td>2026-10-03</td><td>Issued</td><td>+10</td></tr></table>
-        <button class="button" onclick="show('member')">Back to Dashboard</button>
-    </section>
-
-    <section id="calendar" class="screen card">
-        <h1>Reservation Calendar</h1>
-        <label>Select date<input type="date" value="2026-10-07"></label>
-        <p>One court only. Green slots are available; red slots are already booked.</p>
-        <div class="slots">
-            <div class="slot available"><strong>09:00–10:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
-            <div class="slot booked"><strong>10:00–11:00</strong><br>Booked</div>
-            <div class="slot available"><strong>11:00–12:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
-            <div class="slot available"><strong>12:00–13:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
-            <div class="slot booked"><strong>13:00–14:00</strong><br>Booked</div>
-            <div class="slot available"><strong>14:00–15:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
-            <div class="slot available"><strong>15:00–16:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
-            <div class="slot available"><strong>16:00–17:00</strong><br>Available<br><button class="button" onclick="reserve(this)">Reserve</button></div>
+    <section id="payments" class="screen">
+        <div class="card page-card p-4">
+            <div class="d-flex justify-content-between align-items-center"><h1 class="h2 text-primary">Payment Invoice and History</h1><span class="badge text-bg-success">Approved</span></div>
+            <div class="card receipt-card mt-3 p-3">
+                <h2 class="h5">Payment #1</h2>
+                <div class="row g-2 mt-2"><div class="col-12 col-md-6"><strong>Amount:</strong> ₱499.99</div><div class="col-12 col-md-6"><strong>Reference:</strong> 12345</div><div class="col-12 col-md-6"><strong>Payment date:</strong> 2026-10-03</div><div class="col-12 col-md-6"><strong>Submitted:</strong> 2026-10-03 14:20</div><div class="col-12 col-md-6"><strong>Reviewed:</strong> 2026-10-03 14:31</div></div>
+            </div>
+            <button class="btn btn-success mt-3" onclick="show('member')">Back to Dashboard</button>
         </div>
-        <button class="button secondary" onclick="show('member')">Back to Dashboard</button>
+    </section>
+
+    <section id="credits" class="screen">
+        <div class="card page-card p-4">
+            <h1 class="h2 text-primary">My Credits</h1><div class="alert alert-success">Valid credits: <strong id="creditCountLarge">10</strong></div>
+            <h2 class="h5">Credit batches</h2><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Issued</th><th>Total</th><th>Remaining</th><th>Expires</th></tr></thead><tbody><tr><td>2026-10-03</td><td>10</td><td id="batchRemaining">10</td><td>2027-04-06</td></tr></tbody></table></div>
+            <h2 class="h5 mt-4">Transaction history</h2><div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead><tbody><tr><td>2026-10-03</td><td>Issued</td><td>+10</td></tr></tbody></table></div>
+            <button class="btn btn-success" onclick="show('member')">Back to Dashboard</button>
+        </div>
+    </section>
+
+    <section id="calendar" class="screen">
+        <div class="card page-card p-4">
+            <h1 class="h2 text-primary">Reservation Calendar</h1><p class="text-secondary">One court only. Green slots are available; red slots are already booked.</p>
+            <label class="form-label">Select date<input class="form-control" type="date" value="2026-10-07"></label>
+            <div class="row g-3 mt-2">
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>09:00–10:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot booked rounded p-3"><strong>10:00–11:00</strong><br>Booked</div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>11:00–12:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>12:00–13:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot booked rounded p-3"><strong>13:00–14:00</strong><br>Booked</div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>14:00–15:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>15:00–16:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+                <div class="col-12 col-sm-6 col-lg-3"><div class="slot available rounded p-3"><strong>16:00–17:00</strong><br>Available<button class="btn btn-success btn-sm mt-2" onclick="reserve(this)">Reserve</button></div></div>
+            </div>
+            <button class="btn btn-outline-secondary mt-4" onclick="show('member')">Back to Dashboard</button>
+        </div>
     </section>
 
     <section id="admin" class="screen">
-        <h1>Admin Dashboard</h1>
-        <div class="grid">
-            <div class="stat"><span>Total users</span><strong>2</strong></div>
-            <div class="stat"><span>Active members</span><strong>1</strong></div>
-            <div class="stat"><span>Pending payments</span><strong id="pendingCount">1</strong></div>
-            <div class="stat"><span>Today's bookings</span><strong>0</strong></div>
-        </div>
-        <div class="two-column">
-            <div class="card"><h2>Pending payment</h2><p><strong>Adrian Caranay</strong><br>adrian@example.com<br>₱499.99 · Ref: 12345</p><button class="button" onclick="approvePayment()">Approve</button><button class="button secondary" onclick="rejectPayment()">Reject</button><p id="reviewMessage"></p></div>
-            <div class="card"><h2>Admin tools</h2><button class="button" onclick="show('users')">View All Users</button><button class="button secondary" onclick="show('calendar')">View Calendar</button><button class="button secondary" onclick="show('home')">Log out</button></div>
-        </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3"><div><h1 class="h2 text-primary">Admin Dashboard</h1><p class="text-secondary mb-0">Manage users, payments, and bookings</p></div><button class="btn btn-outline-secondary mt-2 mt-md-0" onclick="show('home')">Log out</button></div>
+        <div class="row g-3"><div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Total users</small><div class="value">2</div></div></div><div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Active members</small><div class="value">1</div></div></div><div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Pending payments</small><div id="pendingCount" class="value">1</div></div></div><div class="col-6 col-lg-3"><div class="card page-card stat-card p-3"><small class="text-secondary">Today's bookings</small><div class="value">0</div></div></div></div>
+        <div class="row g-3 mt-1"><div class="col-12 col-lg-6"><div class="card page-card p-4"><h2 class="h5">Pending payment</h2><p><strong>Adrian Caranay</strong><br>adrian@example.com<br>₱499.99 · Ref: 12345</p><button class="btn btn-success me-2" onclick="approvePayment()">Approve</button><button class="btn btn-secondary" onclick="rejectPayment()">Reject</button><p id="reviewMessage" class="mb-0 mt-3"></p></div></div><div class="col-12 col-lg-6"><div class="card page-card p-4"><h2 class="h5">Admin tools</h2><button class="btn btn-success me-2" onclick="show('users')">View All Users</button><button class="btn btn-outline-success" onclick="show('calendar')">View Calendar</button></div></div></div>
     </section>
 
-    <section id="users" class="screen card">
-        <h1>User Accounts</h1>
-        <table><tr><th>Name</th><th>Email</th><th>Role</th><th>Membership</th></tr><tr><td>Adrian Caranay</td><td>adrian@example.com</td><td>Admin</td><td><span class="badge">Active</span></td></tr><tr><td>Member Demo</td><td>member@example.com</td><td>User</td><td><span class="badge" id="memberStatus">Pending</span></td></tr></table>
-        <button class="button" onclick="show('admin')">Back to Admin Dashboard</button>
-    </section>
+    <section id="users" class="screen"><div class="card page-card p-4"><h1 class="h2 text-primary">User Accounts</h1><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Membership</th></tr></thead><tbody><tr><td>Adrian Caranay</td><td>adrian@example.com</td><td>Admin</td><td><span class="badge text-bg-success">Active</span></td></tr><tr><td>Member Demo</td><td>member@example.com</td><td>User</td><td><span id="memberStatus" class="badge text-bg-warning">Pending</span></td></tr></tbody></table></div><button class="btn btn-success" onclick="show('admin')">Back to Admin Dashboard</button></div></section>
 </main>
-<footer>Static prototype for demonstration only. The real application runs through PHP and MySQL.</footer>
+<footer class="container text-center text-secondary py-3">Static prototype for demonstration only. The real application runs through PHP and MySQL.</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function show(id) {
-        document.querySelectorAll('.screen').forEach(function (screen) { screen.classList.remove('active'); });
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0, 0);
-    }
-    function approvePayment() {
-        document.getElementById('pendingCount').textContent = '0';
-        document.getElementById('reviewMessage').textContent = 'Payment approved. Membership activated and 10 credits issued.';
-        document.getElementById('reviewMessage').className = 'notice success';
-        document.getElementById('memberStatus').textContent = 'Active';
-        document.getElementById('memberStatus').className = 'badge';
-    }
-    function rejectPayment() {
-        document.getElementById('pendingCount').textContent = '0';
-        document.getElementById('reviewMessage').textContent = 'Payment rejected. A note would be shown to the member.';
-        document.getElementById('reviewMessage').className = 'notice';
-    }
-    function reserve(button) {
-        var slot = button.parentElement;
-        slot.className = 'slot booked';
-        slot.innerHTML = '<strong>' + slot.querySelector('strong').textContent + '</strong><br>Booked';
-        var count = document.getElementById('creditCount');
-        var large = document.getElementById('creditCountLarge');
-        var remaining = document.getElementById('batchRemaining');
-        count.textContent = Math.max(0, Number(count.textContent) - 1);
-        large.textContent = Math.max(0, Number(large.textContent) - 1);
-        remaining.textContent = Math.max(0, Number(remaining.textContent) - 1);
-        alert('Demo reservation confirmed. 1 credit was used.');
-    }
+    function show(id) { document.querySelectorAll('.screen').forEach(function (screen) { screen.classList.remove('active'); }); document.getElementById(id).classList.add('active'); window.scrollTo(0, 0); }
+    function approvePayment() { document.getElementById('pendingCount').textContent = '0'; document.getElementById('reviewMessage').textContent = 'Payment approved. Membership activated and 10 credits issued.'; document.getElementById('reviewMessage').className = 'alert alert-success mt-3'; document.getElementById('memberStatus').textContent = 'Active'; document.getElementById('memberStatus').className = 'badge text-bg-success'; }
+    function rejectPayment() { document.getElementById('pendingCount').textContent = '0'; document.getElementById('reviewMessage').textContent = 'Payment rejected. A note would be shown to the member.'; document.getElementById('reviewMessage').className = 'alert alert-warning mt-3'; }
+    function reserve(button) { var slot = button.parentElement; var time = slot.querySelector('strong').textContent; slot.className = 'slot booked rounded p-3'; slot.innerHTML = '<strong>' + time + '</strong><br>Booked'; ['creditCount', 'creditCountLarge', 'batchRemaining'].forEach(function (id) { var element = document.getElementById(id); element.textContent = Math.max(0, Number(element.textContent) - 1); }); alert('Demo reservation confirmed. 1 credit was used.'); }
 </script>
 </body>
 </html>
