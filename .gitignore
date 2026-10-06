@@ -1,0 +1,7 @@
+# Local/runtime files
+private_payment_proofs/
+*.log
+
+# Local XAMPP/editor files
+/.vscode/
+/.idea/
