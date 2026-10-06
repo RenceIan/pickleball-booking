@@ -113,10 +113,17 @@ CREATE TABLE IF NOT EXISTS `bookings` (
     `credit_batch_id` INT UNSIGNED NULL,
     `membership_type` VARCHAR(50) NOT NULL DEFAULT 'standard',
     `status` ENUM('confirmed', 'cancelled', 'completed') NOT NULL DEFAULT 'confirmed',
+    `confirmed_slot_key` VARCHAR(40)
+        GENERATED ALWAYS AS (
+            CASE WHEN `status` = 'confirmed'
+                THEN CONCAT(`booking_date`, '-', `start_time`, '-', `end_time`)
+                ELSE NULL
+            END
+        ) STORED,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uq_bookings_slot_status` (`booking_date`, `start_time`, `end_time`, `status`),
+    UNIQUE KEY `uq_bookings_confirmed_slot` (`confirmed_slot_key`),
     KEY `idx_bookings_user_date` (`user_id`, `booking_date`),
     CONSTRAINT `fk_bookings_user`
         FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT,
